@@ -122,14 +122,14 @@ def run_colmap(
     # Feature extraction
     feature_extractor_cmd = [
         f"{colmap_cmd} feature_extractor",
-        f"--database_path {colmap_dir / 'database.db'}",
-        f"--image_path {image_dir}",
+        f"--database_path \"{colmap_dir / 'database.db'}\"",
+        f"--image_path \"{image_dir}\"",
         "--ImageReader.single_camera 1",
         f"--ImageReader.camera_model {camera_model.value}",
         f"--SiftExtraction.use_gpu {int(gpu)}",
     ]
     if camera_mask_path is not None:
-        feature_extractor_cmd.append(f"--ImageReader.camera_mask_path {camera_mask_path}")
+        feature_extractor_cmd.append(f"--ImageReader.camera_mask_path \"{camera_mask_path}\"")
     feature_extractor_cmd = " ".join(feature_extractor_cmd)
     with status(msg="[bold yellow]Running COLMAP feature extractor...", spinner="moon", verbose=verbose):
         run_command(feature_extractor_cmd, verbose=verbose)
@@ -139,7 +139,7 @@ def run_colmap(
     # Feature matching
     feature_matcher_cmd = [
         f"{colmap_cmd} {matching_method}_matcher",
-        f"--database_path {colmap_dir / 'database.db'}",
+        f"--database_path \"{colmap_dir / 'database.db'}\"",
         f"--SiftMatching.use_gpu {int(gpu)}",
     ]
     if matching_method == "vocab_tree":
@@ -155,9 +155,9 @@ def run_colmap(
     sparse_dir.mkdir(parents=True, exist_ok=True)
     mapper_cmd = [
         f"{colmap_cmd} mapper",
-        f"--database_path {colmap_dir / 'database.db'}",
-        f"--image_path {image_dir}",
-        f"--output_path {sparse_dir}",
+        f"--database_path \"{colmap_dir / 'database.db'}\"",
+        f"--image_path \"{image_dir}\"",
+        f"--output_path \"{sparse_dir}\"",
     ]
     if colmap_version >= Version("3.7"):
         mapper_cmd.append("--Mapper.ba_global_function_tolerance=1e-6")
@@ -176,8 +176,8 @@ def run_colmap(
         with status(msg="[bold yellow]Refine intrinsics...", spinner="dqpb", verbose=verbose):
             bundle_adjuster_cmd = [
                 f"{colmap_cmd} bundle_adjuster",
-                f"--input_path {sparse_dir}/0",
-                f"--output_path {sparse_dir}/0",
+                f"--input_path \"{sparse_dir}/0\"",
+                f"--output_path \"{sparse_dir}/0\"",
                 "--BundleAdjustment.refine_principal_point 1",
             ]
             run_command(" ".join(bundle_adjuster_cmd), verbose=verbose)
